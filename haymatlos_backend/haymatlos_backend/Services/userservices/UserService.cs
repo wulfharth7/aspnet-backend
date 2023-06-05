@@ -1,22 +1,31 @@
 ﻿using haymatlos_backend.Models;
 using haymatlos_backend.Services.dbservices;
+using Microsoft.AspNetCore.Identity;
 
 namespace haymatlos_backend.Services.userservices
 {
     public class UserService : IUserService
     {
         private readonly IdatabaseService _dbService;
+        private readonly string _pepper;
+        private string PasswordSalt;
+        private readonly int _iteration = 3;
 
         public UserService(IdatabaseService dbService)
         {
             _dbService = dbService;
+            _pepper = "IReallyLovePeppersAndTheChiliOnes.."; //Environment.GetEnvironmentVariable("PasswordHashExamplePepper"); for now because its a learning project im not using the env, but basically on PROD this should be used.
         }
 
         public async Task<bool> CreateUser(UserModel user)
         {
+            user.Uuid = Guid.NewGuid().ToString();
+            PasswordSalt = HashingPassword.GenerateSalt();
+            user.Password = HashingPassword.ComputeHash(user.Password, PasswordSalt, _pepper, _iteration);
+
             var result =
                 await _dbService.EditData(
-                    "INSERT INTO public.user (id,nickname, password) VALUES (@Id, @Nickname, @Password)",
+                    "INSERT INTO public.user (nickname, password, uuid) VALUES (@Nickname, @Password, @Uuid)",
                     user);
             return true;
         }
@@ -28,11 +37,11 @@ namespace haymatlos_backend.Services.userservices
         }
 
 
-       /* public async Task<UserModel> GetUser(int id)
+        public async Task<UserModel> GetUser(int id)
         {
             var userList = await _dbService.GetAsync<UserModel>("SELECT * FROM public.user where id=@id", new { id });
             return userList;
-        }*/
+        }
 
         public async Task<UserModel> UpdateUser(UserModel User)
         {

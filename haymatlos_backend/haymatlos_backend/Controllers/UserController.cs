@@ -20,23 +20,20 @@ namespace haymatlos_backend.Controllers
             public async Task<IActionResult> Get()
             {
                 var result = await userService.GetUserList();
-
                 return Ok(result);
             }
 
-           /* [HttpGet("{id:int}")]
-            public async Task<IActionResult> GetEmployee(int id)
+           [HttpGet("{id:int}")]
+            public async Task<IActionResult> GetUser(int id)
             {
-                var result = await userService.GetEmployee(id);
-
+                var result = await userService.GetUser(id);
                 return Ok(result);
-            }*/
+            }
 
             [HttpPost]
             public async Task<IActionResult> AddUser([FromBody] UserModel user)
             {
                 var result = await userService.CreateUser(user);
-
                 return Ok(result);
             }
 
@@ -44,7 +41,6 @@ namespace haymatlos_backend.Controllers
             public async Task<IActionResult> UpdateUser([FromBody] UserModel user)
             {
                 var result = await userService.UpdateUser(user);
-
                 return Ok(result);
             }
 
@@ -52,7 +48,6 @@ namespace haymatlos_backend.Controllers
             public async Task<IActionResult> DeleteUser(int id)
             {
                 var result = await userService.DeleteUser(id);
-
                 return Ok(result);
             }
         }
