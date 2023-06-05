@@ -16,7 +16,7 @@ namespace haymatlos_backend.Services.userservices
         {
             var result =
                 await _dbService.EditData(
-                    "INSERT INTO public.user (id,nickname, password) VALUES (@id, @nickname, @password)",
+                    "INSERT INTO public.user (id,nickname, password) VALUES (@Id, @Nickname, @Password)",
                     user);
             return true;
         }
@@ -38,14 +38,14 @@ namespace haymatlos_backend.Services.userservices
         {
             var updateEmployee =
                 await _dbService.EditData(
-                    "UPDATE public.user SET name=@nickname, password=@password WHERE id=@id",
+                    "UPDATE public.user SET name=@Nickname, password=@Password WHERE id=@Id",
                     User);
             return User;
         }
 
         public async Task<bool> DeleteUser(int id)
         {
-            var deleteEmployee = await _dbService.EditData("DELETE FROM public.user WHERE id=@id", new { id });
+            var deleteEmployee = await _dbService.EditData("DELETE FROM public.user WHERE id=@Id", new { id });
             return true;
         }
     }

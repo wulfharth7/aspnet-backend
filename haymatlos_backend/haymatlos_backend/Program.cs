@@ -10,9 +10,6 @@ builder.Services.AddScoped<IdatabaseService, DbService>();
 builder.Services.AddScoped<IUserService, UserService>();
 var app = builder.Build();
 
-
-
-
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
