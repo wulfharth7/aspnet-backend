@@ -1,6 +1,8 @@
-﻿using haymatlos_backend.Models;
+﻿using haymatlos_backend.Hubs;
+using haymatlos_backend.Models;
 using haymatlos_backend.Services.userservices;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace haymatlos_backend.Controllers
 {
@@ -10,10 +12,12 @@ namespace haymatlos_backend.Controllers
         public class UsersController : Controller
         {
             private readonly IUserService userService;
+            private IHubContext<UserHub, IUserHub> userHub;
 
-            public UsersController(IUserService userServicee)
+        public UsersController(IUserService userServicee, IHubContext<UserHub, IUserHub> _userHub)
             {
                 userService = userServicee;
+                userHub = _userHub;
             }
 
             [HttpGet]
@@ -23,10 +27,10 @@ namespace haymatlos_backend.Controllers
                 return Ok(result);
             }
 
-           [HttpGet("{id:int}")]
-            public async Task<IActionResult> GetUser(int id)
+           [HttpGet("{uuid}")]
+            public async Task<IActionResult> GetUser(string uuid)
             {
-                var result = await userService.GetUser(id);
+                var result = await userService.GetUser(uuid);
                 return Ok(result);
             }
 
@@ -34,6 +38,7 @@ namespace haymatlos_backend.Controllers
             public async Task<IActionResult> AddUser([FromBody] UserModel user)
             {
                 var result = await userService.CreateUser(user);
+                await userHub.Clients.All.AddUser(user);
                 return Ok(result);
             }
 

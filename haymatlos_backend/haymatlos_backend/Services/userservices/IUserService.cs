@@ -8,6 +8,6 @@ namespace haymatlos_backend.Services.userservices
             Task<List<UserModel>> GetUserList();
             Task<UserModel> UpdateUser(UserModel User);
             Task<bool> DeleteUser(int key);
-            Task<UserModel> GetUser(int id);
+            Task<UserModel> GetUser(string uuid);
         }
 }

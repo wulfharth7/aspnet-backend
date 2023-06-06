@@ -37,9 +37,9 @@ namespace haymatlos_backend.Services.userservices
         }
 
 
-        public async Task<UserModel> GetUser(int id)
+        public async Task<UserModel> GetUser(string uuid)
         {
-            var userList = await _dbService.GetAsync<UserModel>("SELECT * FROM public.user where id=@id", new { id });
+            var userList = await _dbService.GetAsync<UserModel>("SELECT * FROM public.user where uuid=@Uuid", new { uuid });
             return userList;
         }
 
