@@ -1,13 +1,19 @@
 ﻿using haymatlos_backend.Models;
+using haymatlos_backend.Services.userservices;
 using Microsoft.AspNetCore.SignalR;
 
 namespace haymatlos_backend.Hubs
 {
-    public class UserHub : Hub<IUserHub>
+    public class UserHub : Hub
     {
-      public async Task AddUser(UserModel user)
+        private readonly IUserService userService;
+        public UserHub(IUserService userService)
         {
-            await Clients.All.AddUser(user);
+            this.userService = userService;
+        }
+        public async Task ShowAllUserswithSignalR(List<UserModel> users_)
+        {
+            await Clients.All.SendAsync("ShowAllUserswithSignalR", users_);
         }
     }
 }

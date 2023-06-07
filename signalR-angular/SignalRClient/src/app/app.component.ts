@@ -14,8 +14,9 @@ export class AppComponent {
     ngOnInit(): void {
         this.hubConnectionBuilder = new HubConnectionBuilder().withUrl('https://localhost:7260/users').configureLogging(LogLevel.Information).build();
         this.hubConnectionBuilder.start().then(() => console.log('Connection started.......!')).catch(err => console.log('Error while connect with server'));
-        this.hubConnectionBuilder.on('AddUser', (result: any) => {
-            this.offers.push(result);
+        this.hubConnectionBuilder.on('ShowAllUserswithSignalR', (result: any) => {
+            this.offers = [];
+            this.offers.push(JSON.stringify(result));
         });
     }
 }

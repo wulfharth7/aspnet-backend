@@ -1,6 +1,7 @@
 ﻿using haymatlos_backend.Models;
 using haymatlos_backend.Services.dbservices;
 using Microsoft.AspNetCore.Identity;
+using System;
 
 namespace haymatlos_backend.Services.userservices
 {
@@ -52,9 +53,9 @@ namespace haymatlos_backend.Services.userservices
             return User;
         }
 
-        public async Task<bool> DeleteUser(int id)
+        public async Task<bool> DeleteUser(string uuid)
         {
-            var deleteEmployee = await _dbService.EditData("DELETE FROM public.user WHERE id=@Id", new { id });
+            var deleteEmployee = await _dbService.EditData("DELETE FROM public.user WHERE uuid=@Uuid", new { uuid });
             return true;
         }
     }

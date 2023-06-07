@@ -3,6 +3,7 @@ using haymatlos_backend.Models;
 using haymatlos_backend.Services.userservices;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using System.Web.Http.Controllers;
 
 namespace haymatlos_backend.Controllers
 {
@@ -12,9 +13,9 @@ namespace haymatlos_backend.Controllers
         public class UsersController : Controller
         {
             private readonly IUserService userService;
-            private IHubContext<UserHub, IUserHub> userHub;
+            private readonly IHubContext<UserHub> userHub;
 
-        public UsersController(IUserService userServicee, IHubContext<UserHub, IUserHub> _userHub)
+        public UsersController(IUserService userServicee, IHubContext<UserHub> _userHub)
             {
                 userService = userServicee;
                 userHub = _userHub;
@@ -24,6 +25,7 @@ namespace haymatlos_backend.Controllers
             public async Task<IActionResult> Get()
             {
                 var result = await userService.GetUserList();
+                await showDataFromApi();
                 return Ok(result);
             }
 
@@ -31,6 +33,7 @@ namespace haymatlos_backend.Controllers
             public async Task<IActionResult> GetUser(string uuid)
             {
                 var result = await userService.GetUser(uuid);
+                await showDataFromApi();
                 return Ok(result);
             }
 
@@ -38,7 +41,7 @@ namespace haymatlos_backend.Controllers
             public async Task<IActionResult> AddUser([FromBody] UserModel user)
             {
                 var result = await userService.CreateUser(user);
-                await userHub.Clients.All.AddUser(user);
+                await showDataFromApi();
                 return Ok(result);
             }
 
@@ -46,14 +49,22 @@ namespace haymatlos_backend.Controllers
             public async Task<IActionResult> UpdateUser([FromBody] UserModel user)
             {
                 var result = await userService.UpdateUser(user);
+                await showDataFromApi();
                 return Ok(result);
             }
 
-            [HttpDelete("{id:int}")]
-            public async Task<IActionResult> DeleteUser(int id)
+            [HttpDelete("{uuid}")]
+            public async Task<IActionResult> DeleteUser(string uuid)
             {
-                var result = await userService.DeleteUser(id);
+                var result = await userService.DeleteUser(uuid);
+                await showDataFromApi();
                 return Ok(result);
+            }
+            [HttpGet("data")]
+            public async Task showDataFromApi()
+            {
+                var users_ = await userService.GetUserList();
+                await userHub.Clients.All.SendAsync("ShowAllUserswithSignalR", users_);
             }
         }
     }

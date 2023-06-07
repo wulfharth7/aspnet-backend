@@ -1,7 +1,7 @@
-
 using haymatlos_backend.Hubs;
 using haymatlos_backend.Services.dbservices;
 using haymatlos_backend.Services.userservices;
+using Microsoft.AspNetCore.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSignalR();
@@ -12,7 +12,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IdatabaseService, DbService>();
-builder.Services.AddScoped<IUserService, UserService>(); 
+builder.Services.AddScoped<IUserService, UserService>();
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

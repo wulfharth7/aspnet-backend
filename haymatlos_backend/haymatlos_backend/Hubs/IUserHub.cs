@@ -4,6 +4,6 @@ namespace haymatlos_backend.Hubs
 {
     public interface IUserHub
     {
-        Task AddUser(UserModel user);
+        Task ShowAllUserswithSignalR(List<UserModel>? users);
     }
 }

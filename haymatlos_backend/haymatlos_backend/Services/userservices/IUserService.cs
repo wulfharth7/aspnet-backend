@@ -1,4 +1,5 @@
 ﻿using haymatlos_backend.Models;
+using System;
 
 namespace haymatlos_backend.Services.userservices
 {
@@ -7,7 +8,7 @@ namespace haymatlos_backend.Services.userservices
             Task<bool> CreateUser(UserModel User);
             Task<List<UserModel>> GetUserList();
             Task<UserModel> UpdateUser(UserModel User);
-            Task<bool> DeleteUser(int key);
+            Task<bool> DeleteUser(string uuid);
             Task<UserModel> GetUser(string uuid);
         }
 }
