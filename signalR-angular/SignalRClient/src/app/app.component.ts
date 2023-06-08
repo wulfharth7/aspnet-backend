@@ -8,15 +8,23 @@ import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signal
 })
 export class AppComponent {
     title = 'SignalRClient';
-    private hubConnectionBuilder!: HubConnection;
+    private usersHubConnectionBuilder!: HubConnection;
+    private postsHubConnectionBuilder!: HubConnection;
     offers: any[] = [];
+    posts: any[] = [];
     constructor() {}
     ngOnInit(): void {
-        this.hubConnectionBuilder = new HubConnectionBuilder().withUrl('https://localhost:7260/users').configureLogging(LogLevel.Information).build();
-        this.hubConnectionBuilder.start().then(() => console.log('Connection started.......!')).catch(err => console.log('Error while connect with server'));
-        this.hubConnectionBuilder.on('ShowAllUserswithSignalR', (result: any) => {
+        this.usersHubConnectionBuilder = new HubConnectionBuilder().withUrl('https://localhost:7260/users').configureLogging(LogLevel.Information).build();
+        this.postsHubConnectionBuilder = new HubConnectionBuilder().withUrl('https://localhost:7260/post').configureLogging(LogLevel.Information).build();
+        this.usersHubConnectionBuilder.start().then(() => console.log('Connection started.......!')).catch(err => console.log('Error while connect with server'));
+        this.postsHubConnectionBuilder.start().then(() => console.log('Connection started.......!')).catch(err => console.log('Error while connect with server'));
+        this.usersHubConnectionBuilder.on('ShowAllUserswithSignalR', (result: any) => {
             this.offers = [];
             this.offers.push(JSON.stringify(result));
+        });
+        this.postsHubConnectionBuilder.on('showRelatedPosts', (result: any) => {
+            this.posts = [];
+            this.posts.push(JSON.stringify(result));
         });
     }
 }

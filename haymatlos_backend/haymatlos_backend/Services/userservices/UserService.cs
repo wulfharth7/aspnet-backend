@@ -44,13 +44,19 @@ namespace haymatlos_backend.Services.userservices
             return userList;
         }
 
-        public async Task<UserModel> UpdateUser(UserModel User)
+        public async Task<UserModel> UpdateUser(string userId, UserModel user)
         {
-            var updateEmployee =
-                await _dbService.EditData(
-                    "UPDATE public.user SET name=@Nickname, password=@Password WHERE id=@Id",
-                    User);
-            return User;
+            var updateEmployee = await _dbService.EditData(
+                "UPDATE public.user SET nickname = @Nickname, password = @Password, uuid = @Uuid WHERE uuid = @userId",
+                new
+                {
+                    user.Nickname,
+                    user.Password,
+                    user.Uuid,
+                    userId
+                });
+
+            return user;
         }
 
         public async Task<bool> DeleteUser(string uuid)

@@ -7,7 +7,7 @@ namespace haymatlos_backend.Services.userservices
     {      
             Task<bool> CreateUser(UserModel User);
             Task<List<UserModel>> GetUserList();
-            Task<UserModel> UpdateUser(UserModel User);
+            Task<UserModel> UpdateUser(string userId, UserModel User);
             Task<bool> DeleteUser(string uuid);
             Task<UserModel> GetUser(string uuid);
         }
