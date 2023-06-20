@@ -38,7 +38,8 @@ namespace ef_core_haymatlos.Utils.DataProviders
         public Post GetSinglePost(string uuid)
         {
             var entity = _context.Posts.FirstOrDefault(x => x.Uuid == uuid);
-            if (entity != null)
+            Console.WriteLine(entity);
+            if (entity == null)
             {
                 throw new Exception("The post you've tried to find doesn't exist.");
             }
@@ -46,6 +47,7 @@ namespace ef_core_haymatlos.Utils.DataProviders
         }
         public List<Post> GetAllPosts()
         {
+            Console.WriteLine("eee");
             return _context.Posts.ToList();
         }
     }

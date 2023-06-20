@@ -13,7 +13,7 @@ public partial class Post
 
     public string? Image { get; set; }
 
-    public int Id { get; set; }
+    public int? Id { get; set; }
 
     public string Uuid { get; set; } = null!;
 
@@ -21,5 +21,5 @@ public partial class Post
 
     public int? Like { get; set; }
 
-    public virtual User OwnerNavigation { get; set; } = null!;
+    public virtual User? OwnerNavigation { get; set; } = null!;  //lazy loading https://www.learnentityframeworkcore.com/lazy-loading
 }

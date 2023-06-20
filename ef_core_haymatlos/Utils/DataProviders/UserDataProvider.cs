@@ -38,7 +38,7 @@ namespace ef_core_haymatlos.Utils.DataProviders
         public User GetSingleUser(string uuid)
         {
             var entity = _context.Users.FirstOrDefault(x => x.Uuid == uuid);
-            if (entity != null)
+            if (entity == null)
             {
                 throw new Exception("The user you've tried to find doesn't exist.");
             }

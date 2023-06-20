@@ -5,6 +5,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace ef_core_haymatlos.Controllers
 {
+    [ApiController]
     [Route("[controller]")]
     public class PostController : ControllerBase
     {
@@ -21,15 +22,18 @@ namespace ef_core_haymatlos.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] Post post)
+        public IActionResult Create([FromBody] Post post)  
         {
-            if (ModelState.IsValid)
-            {
+            Console.WriteLine(post);
+            Console.WriteLine("asdasdsd");
+
+         /*   if (ModelState.IsValid)
+            {*/
                 Guid uuid = Guid.NewGuid();
                 post.Uuid = uuid.ToString();
                 postDataProvider.AddPost(post);
                 return Ok();
-            }
+/*            }*/
             return BadRequest();
         }
 
@@ -54,7 +58,7 @@ namespace ef_core_haymatlos.Controllers
         public IActionResult Delete(string uuid)
         {
             var data = postDataProvider.GetSinglePost(uuid);
-            if (data != null)
+            if (data == null)
             {
                 return NotFound();
             }

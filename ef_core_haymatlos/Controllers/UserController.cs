@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ef_core_haymatlos.Controllers
 {
+    [ApiController]
     [Route("[controller]")]
     public class UserController : ControllerBase
     {
