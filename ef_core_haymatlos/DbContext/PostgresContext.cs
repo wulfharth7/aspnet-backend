@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using ef_core_haymatlos.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using ef_core_haymatlos.Models;
 
-namespace ef_core_haymatlos.Data;
+namespace ef_core_haymatlos.DbContext;
 
-public partial class PostgresContext : DbContext
+public partial class PostgresContext : IdentityDbContext<IdentityUser, IdentityRole, string>
 {
     public PostgresContext()
     {
@@ -16,16 +18,99 @@ public partial class PostgresContext : DbContext
     {
     }
 
+    public virtual DbSet<AspNetRole> AspNetRoles { get; set; }
+
+    public virtual DbSet<AspNetRoleClaim> AspNetRoleClaims { get; set; }
+
+    public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
+
+    public virtual DbSet<AspNetUserClaim> AspNetUserClaims { get; set; }
+
+    public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; }
+
+    public virtual DbSet<AspNetUserToken> AspNetUserTokens { get; set; }
+
     public virtual DbSet<Post> Posts { get; set; }
+
+    public virtual DbSet<Post1> Posts1 { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
 
+    public virtual DbSet<User1> Users1 { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //Scaffold-DbContext "Server=localhost;Database=postgres;User Id=user;Password=admin;" dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL -OutputDir Models
         => optionsBuilder.UseNpgsql("Server=localhost;Database=postgres;User Id=user;Password=admin;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<AspNetRole>(entity =>
+        {
+            entity.HasIndex(e => e.NormalizedName, "RoleNameIndex").IsUnique();
+
+            entity.Property(e => e.Name).HasMaxLength(256);
+            entity.Property(e => e.NormalizedName).HasMaxLength(256);
+        });
+
+        modelBuilder.Entity<AspNetRoleClaim>(entity =>
+        {
+            entity.HasIndex(e => e.RoleId, "IX_AspNetRoleClaims_RoleId");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.AspNetRoleClaims).HasForeignKey(d => d.RoleId);
+        });
+
+        modelBuilder.Entity<AspNetUser>(entity =>
+        {
+            entity.HasIndex(e => e.NormalizedEmail, "EmailIndex");
+
+            entity.HasIndex(e => e.NormalizedUserName, "UserNameIndex").IsUnique();
+
+            entity.Property(e => e.Email).HasMaxLength(256);
+            entity.Property(e => e.NormalizedEmail).HasMaxLength(256);
+            entity.Property(e => e.NormalizedUserName).HasMaxLength(256);
+            entity.Property(e => e.UserName).HasMaxLength(256);
+
+            entity.HasMany(d => d.Roles).WithMany(p => p.Users)
+                .UsingEntity<Dictionary<string, object>>(
+                    "AspNetUserRole",
+                    r => r.HasOne<AspNetRole>().WithMany().HasForeignKey("RoleId"),
+                    l => l.HasOne<AspNetUser>().WithMany().HasForeignKey("UserId"),
+                    j =>
+                    {
+                        j.HasKey("UserId", "RoleId");
+                        j.ToTable("AspNetUserRoles");
+                        j.HasIndex(new[] { "RoleId" }, "IX_AspNetUserRoles_RoleId");
+                    });
+        });
+
+        modelBuilder.Entity<AspNetUserClaim>(entity =>
+        {
+            entity.HasIndex(e => e.UserId, "IX_AspNetUserClaims_UserId");
+
+            entity.HasOne(d => d.User).WithMany(p => p.AspNetUserClaims).HasForeignKey(d => d.UserId);
+        });
+
+        modelBuilder.Entity<AspNetUserLogin>(entity =>
+        {
+            entity.HasKey(e => new { e.LoginProvider, e.ProviderKey });
+
+            entity.HasIndex(e => e.UserId, "IX_AspNetUserLogins_UserId");
+
+            entity.Property(e => e.LoginProvider).HasMaxLength(128);
+            entity.Property(e => e.ProviderKey).HasMaxLength(128);
+
+            entity.HasOne(d => d.User).WithMany(p => p.AspNetUserLogins).HasForeignKey(d => d.UserId);
+        });
+
+        modelBuilder.Entity<AspNetUserToken>(entity =>
+        {
+            entity.HasKey(e => new { e.UserId, e.LoginProvider, e.Name });
+
+            entity.Property(e => e.LoginProvider).HasMaxLength(128);
+            entity.Property(e => e.Name).HasMaxLength(128);
+
+            entity.HasOne(d => d.User).WithMany(p => p.AspNetUserTokens).HasForeignKey(d => d.UserId);
+        });
+
         modelBuilder.Entity<Post>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("posts_pkey");
@@ -49,6 +134,15 @@ public partial class PostgresContext : DbContext
                 .HasConstraintName("nickname");
         });
 
+        modelBuilder.Entity<Post1>(entity =>
+        {
+            entity.ToTable("Posts");
+
+            entity.HasIndex(e => e.OwnerNavigationId, "IX_Posts_OwnerNavigationId");
+
+            entity.HasOne(d => d.OwnerNavigation).WithMany(p => p.Post1s).HasForeignKey(d => d.OwnerNavigationId);
+        });
+
         modelBuilder.Entity<User>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("user_pkey");
@@ -67,6 +161,11 @@ public partial class PostgresContext : DbContext
             entity.Property(e => e.Uuid).HasColumnName("uuid");
         });
 
+        modelBuilder.Entity<User1>(entity =>
+        {
+            entity.ToTable("Users");
+        });
+
         OnModelCreatingPartial(modelBuilder);
     }
 
@@ -77,7 +176,3 @@ public partial class PostgresContext : DbContext
         return base.SaveChanges();
     }
 }
-
-
-
-//Note: Once you have created the model, you must use the Migration commands whenever you change the model to keep the database up to date with the model.

@@ -1,6 +1,7 @@
-using ef_core_haymatlos.Data;
+using ef_core_haymatlos.DbContext;
 using ef_core_haymatlos.Utils.DataProviders;
 using ef_core_haymatlos.Utils.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,16 @@ builder.Services.AddCors(options => {
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<PostgresContext>();
+builder.Services.AddDefaultIdentity<IdentityUser>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = true;
+    options.Password.RequireDigit = false;
+    options.Password.RequiredLength = 6;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireLowercase = false;
+}).AddEntityFrameworkStores<PostgresContext>();
+
 builder.Services.AddScoped<IUserDataProvider, UserDataProvider>();
 builder.Services.AddScoped<IPostDataProvider, PostDataProvider>();
 var app = builder.Build();
@@ -27,9 +38,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 
+app.UseRouting();
+app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
-
+app.MapRazorPages();
 app.Run();
