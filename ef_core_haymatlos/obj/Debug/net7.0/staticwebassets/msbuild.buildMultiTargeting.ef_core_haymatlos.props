@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\build\ef_core_haymatlos.props" />
-</Project>
