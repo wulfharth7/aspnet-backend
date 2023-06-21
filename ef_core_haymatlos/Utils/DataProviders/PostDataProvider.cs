@@ -1,4 +1,4 @@
-﻿using ef_core_haymatlos.DbContext;
+﻿using ef_core_haymatlos.Data;
 using ef_core_haymatlos.Models;
 using ef_core_haymatlos.Utils.Interfaces;
 
