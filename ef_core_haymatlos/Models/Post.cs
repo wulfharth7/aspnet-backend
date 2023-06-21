@@ -21,5 +21,5 @@ public partial class Post
 
     public int? Like { get; set; }
 
-    public virtual User? OwnerNavigation { get; set; } = null!;  //lazy loading https://www.learnentityframeworkcore.com/lazy-loading
+    public User? OwnerNavigation { get; set; } = null!;  //lazy loading https://www.learnentityframeworkcore.com/lazy-loading
 }

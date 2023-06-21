@@ -44,7 +44,7 @@ namespace ef_core_haymatlos.Controllers
         }
 
         [HttpPut]
-        public IActionResult Edit([FromBody] Post post)
+        public IActionResult Edit([FromBody] Post post) // <-- Creates a clone of the same object with different values.
         {
             if (ModelState.IsValid)
             {
